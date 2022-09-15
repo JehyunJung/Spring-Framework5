@@ -1,0 +1,35 @@
+package hello.aop.exam.aop;
+
+import hello.aop.exam.annotation.Retry;
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+
+@Slf4j
+@Aspect
+public class RetryAspect {
+    @Around("@annotation(retry)")
+    public Object doRetry(ProceedingJoinPoint proceedingJoinPoint, Retry retry) throws Throwable{
+        log.info("[Retry] {} Retry={}", proceedingJoinPoint.getSignature(), retry);
+
+        int maxRetry = retry.value();
+        Exception exceptionHolder = null;
+        for (int retryCount = 0; retryCount <= maxRetry; retryCount++) {
+            try {
+                log.info("[Retry] try count={}/{}", retryCount+1, maxRetry);
+                return proceedingJoinPoint.proceed();
+            } catch (Exception e) {
+                exceptionHolder = e;
+            }
+        }
+
+        return exceptionHolder;
+
+
+
+
+    }
+}

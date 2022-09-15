@@ -106,6 +106,14 @@ public class ExecutionTest {
         assertThat(pointcut.matches(internal, MemberServiceImpl.class)).isFalse();
     }
 
+    @Test
+    void typeMatchInternal2() throws NoSuchMethodException {
+        pointcut.setExpression("execution(* hello.aop.member.MemberServiceImpl.*(..))");
+        Method internal = MemberServiceImpl.class.getMethod("internal", String.class);
+
+        assertThat(pointcut.matches(internal, MemberServiceImpl.class)).isTrue();
+    }
+
     //parameter 매칭
     @Test
     void argsMatch(){
